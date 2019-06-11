@@ -1,0 +1,22 @@
+{
+  "name": "dackbot",
+  "version": "1.0.0",
+  "description": "Chat bot for the DACKTown Discord server",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "start-mon": "nodemon server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^11.5.1",
+    "express": "^4.17.1",
+    "fluent-ffmpeg": "^2.1.2",
+    "youtube-dl": "^2.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.1"
+  }
+}
