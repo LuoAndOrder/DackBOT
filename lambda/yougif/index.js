@@ -1,4 +1,4 @@
-const ytdl = require('ytdl-core');
+const ytdl = require('youtube-dl');
 const ffmpeg = require('fluent-ffmpeg');
 const Gfycat = require('gfycat-sdk');
 const uuidv4 = require('uuid/v4');
@@ -34,12 +34,12 @@ async function handleYouGifRequest(body) {
   const ytdlGetInfo = promisify(ytdl.getInfo);
   await ytdlGetInfo(url, ytOptions).then(async info => {
     // convert to webm
-    console.log("YOUTUBE INFO: " + info.video_url);
+    console.log("YOUTUBE INFO: " + info.url);
     await new Promise((resolve, reject) => {
-      ffmpeg(info.video_url)
+      ffmpeg(info.url)
       .setFfmpegPath('/opt/bin/ffmpeg')
       .on('start', function() {
-        console.log(`[ffmpeg] Start Processing: ${info.video_url}`);
+        console.log(`[ffmpeg] Start Processing: ${info.url}`);
       })
       .on('progress', (progress) => {
         console.log(`[ffmpeg] ${JSON.stringify(progress)}`);
@@ -53,37 +53,38 @@ async function handleYouGifRequest(body) {
       .withVideoCodec('libvpx')
       .withVideoBitrate(1024)
       .withAudioCodec('libvorbis')
-      .saveToFile(`${uuid}.webm`)
+      .saveToFile(`/tmp/${uuid}.webm`)
       .on('end', function() {
         resolve();
       })
     })
-    .then((result) => {
+    .then(async (result) => {
       console.log(`[ffmpeg] Finished processing. Saved file to: ${uuid}.webm`);
         
       // Get a gfyname
       const headers = {Authorization: gfycat.token};
-      rp({
+      await rp({
         uri: 'https://api.gfycat.com/v1/gfycats',
           json: true,
           method: 'POST',
           headers,
           body: {url},
       })
-      .then(({gfyname, secret}) => {
+      .then(async ({gfyname, secret}) => {
         console.log(`gfyname: ${gfyname} secret: ${secret}`);
 
         // Upload it
-        rp({
+        await rp({
           uri: 'https://filedrop.gfycat.com',
             json: true,
             method: 'POST',
             formData: {
               key: gfyname,
-              file: fs.createReadStream(`./${uuid}.webm`),
+              file: fs.createReadStream(`/tmp/${uuid}.webm`),
             },
         })
         .then(() => {
+          console.log("Uploaded to gfycat.");
           return ({
             'statusCode': 200,
             'body': JSON.stringify({

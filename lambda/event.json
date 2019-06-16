@@ -1,5 +1,5 @@
 {
-  "body": "{\"url\": \"https://www.youtube.com/watch?v=4g2KjWYGEmE\", \"startTime\": \"00:00:00\", \"duration\": 10}",
+  "body": "{\"url\": \"https://www.youtube.com/watch?v=BZbChKzedEk\", \"startTime\": \"00:00:00\", \"duration\": 10}",
   "resource": "/{proxy+}",
   "path": "/path/to/resource",
   "httpMethod": "POST",
