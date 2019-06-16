@@ -11,12 +11,9 @@ let handleHello = (msg) => {
   msg.channel.send('Hello, world!');
 }
 
-let handlePre = (msg) => {
-  msg.channel.send('Prefix recognized.');
-}
-
 Registry.registerExactCommand("!hello", handleHello);
 Registry.registerPrefixCommand('!tubegif', tubeGif);
+Registry.registerRegexCommand("youtube.com\\/watch\\?v=([a-zA-Z0-9_-]{11})", tubeGif);
 
 client.on('message', msg => {
   let lowerMsg = msg.content.toLowerCase();
@@ -30,6 +27,15 @@ client.on('message', msg => {
     if (lowerMsg.startsWith(prefixCommand + ' ')) {
       console.log(prefixCommands[prefixCommand]);
       return prefixCommands[prefixCommand](msg);
+    }
+  }
+
+  let regexCommands = Registry.getRegexCommandCallbacks();
+  for (var regexCommand in regexCommands) {
+    let regex = new RegExp(regexCommand);
+    if(regex.test(lowerMsg)) {
+      console.log(regexCommands[regexCommand]);
+      return regexCommands[regexCommand](msg);
     }
   }
 });

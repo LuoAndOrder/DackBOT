@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Commands for the DackBOT
+  
+Globals:
+  Function:
+    Timeout: 60
+
+Resources:
+  YouGifCommandFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: yougif/
+      Handler: index.handler
+      Runtime: nodejs8.10
+      MemorySize: 2048
+      Layers:
+        - arn:aws:lambda:us-west-2:523775743690:layer:ffmpeg:9
+      Environment:
+        Variables:
+          DACKBOT_WEBHOOK_ID: '123'
+          DACKBOT_WEBHOOK_TOKEN: '123'
+          GFYCAT_CLIENT_ID: '123'
+          GFYCAT_CLIENT_SECRET: '123'
+      Events:
+        OnMessage:
+          Type: Api
+          Properties:
+            Path: /dackbot/yougif
+            Method: post
+
+Outputs:
+  DackbotApi:
+    Description: "API Gateway endpoint URL for Prod stage for Dackbot functions"
+    Value: !Sub "https://${DackbotApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/dackbot/"

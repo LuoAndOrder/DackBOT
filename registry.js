@@ -2,6 +2,7 @@
 
 let EXACT_COMMANDS = {};
 let PREFIX_COMMANDS = {};
+let REGEX_COMMANDS = {};
 
 class Registry {
 
@@ -14,12 +15,20 @@ class Registry {
     PREFIX_COMMANDS[commandStr] = callback;
   }
 
+  static registerRegexCommand(regexStr, callback) {
+    REGEX_COMMANDS[regexStr] = callback;
+  }
+
   static getExactCommandCallbacks() {
     return EXACT_COMMANDS;
   }
 
   static getPrefixCommandCallbacks() {
     return PREFIX_COMMANDS;
+  }
+
+  static getRegexCommandCallbacks() {
+    return REGEX_COMMANDS;
   }
 }
 
