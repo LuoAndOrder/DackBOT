@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "aws-sdk": "^2.476.0",
     "discord.js": "^11.5.1",
     "express": "^4.17.1",
     "fluent-ffmpeg": "^2.1.2",

@@ -1,0 +1,143 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Commands for the DackBOT
+
+  '
+Globals:
+  Function:
+    Environment:
+      Variables:
+        DACKBOT_WEBHOOK_ID:
+          Ref: DackbotWebhookId
+        DACKBOT_WEBHOOK_TOKEN:
+          Ref: DackbotWebhookToken
+        GFYCAT_CLIENT_ID:
+          Ref: GfycatClientId
+        GFYCAT_CLIENT_SECRET:
+          Ref: GfycatClientSecret
+    Runtime: nodejs8.10
+    Timeout: 60
+Outputs:
+  GfycatPollerFunctionArrn:
+    Description: Gfycat Poller Function ARN
+    Value:
+      Fn::GetAtt:
+      - GfycatPollerFunction
+      - Arn
+  YouGifConverterFunctionArn:
+    Description: YouGif Converter Function ARN
+    Value:
+      Fn::GetAtt:
+      - YouGifConverterFunction
+      - Arn
+  YougifStepFunctionStateMachineArn:
+    Description: Step Function State Machine ARN
+    Value:
+      Ref: YouGifStepFunctionStateMachine
+Parameters:
+  DackbotWebhookId:
+    Default: putyourshere
+    Description: Webhook id for sending messages to discord
+    Type: String
+  DackbotWebhookToken:
+    Default: putyourshere
+    Description: Webhook token for sending messages to discord
+    Type: String
+  GfycatClientId:
+    Default: putyourshere
+    Description: Gfycat API client id
+    Type: String
+  GfycatClientSecret:
+    Default: putyourshere
+    Description: Gfycat API secret
+    Type: String
+Resources:
+  GfycatPollerFunction:
+    Properties:
+      CodeUri: s3://kwluo-sam/9d692fd828c20fc6fe1d47dd94ec6d3b
+      Handler: index.handler
+      MemorySize: 256
+    Type: AWS::Serverless::Function
+  StepFunctionsServiceRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service:
+            - Fn::Sub: states.${AWS::Region}.amazonaws.com
+          Sid: AllowStepFunctionsServiceToAssumeRole
+        Version: '2012-10-17'
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/AWSStepFunctionsFullAccess
+      Path:
+        Fn::Join:
+        - ''
+        - - /
+          - Ref: AWS::StackName
+          - /
+      Policies:
+      - PolicyDocument:
+          Statement:
+          - Action:
+            - lambda:InvokeFunction
+            Effect: Allow
+            Resource:
+            - Fn::Sub: ${YouGifConverterFunction.Arn}
+            - Fn::Sub: ${GfycatPollerFunction.Arn}
+          Version: '2012-10-17'
+        PolicyName: CallLambdaFunctions
+    Type: AWS::IAM::Role
+  YouGifConverterFunction:
+    Properties:
+      CodeUri: s3://kwluo-sam/f9b94992558fc73f61ea778723e74255
+      Handler: index.handler
+      Layers:
+      - arn:aws:lambda:us-west-2:523775743690:layer:ffmpeg-native:1
+      MemorySize: 2048
+    Type: AWS::Serverless::Function
+  YouGifStepFunctionStateMachine:
+    Properties:
+      DefinitionString:
+        Fn::Sub: "{\n  \"Comment\": \"Converts a youtube video into a gif and uploads\
+          \ to gfycat.\",\n  \"StartAt\": \"YouGif Converter\",\n  \"States\": {\n\
+          \    \"YouGif Converter\": {\n      \"Comment\": \"Downloads a youtube video\
+          \ and converts it to a gfycat\",\n      \"Type\": \"Task\",\n      \"Resource\"\
+          : \"${YouGifConverterFunction.Arn}\",\n      \"ResultPath\": \"$.gfydata\"\
+          ,\n      \"Next\": \"Gfycat Poller\"\n    },\n    \"Gfycat Poller\": {\n\
+          \      \"Comment\": \"Polls gfycat to check status of encoder.\",\n    \
+          \  \"Type\": \"Task\",\n      \"Resource\": \"${GfycatPollerFunction.Arn}\"\
+          ,\n      \"End\": true,\n      \"Retry\": [\n        {\n          \"ErrorEquals\"\
+          : [ \"States.TaskFailed\" ],\n          \"IntervalSeconds\": 10,\n     \
+          \     \"MaxAttempts\": 5\n        }\n      ]\n    }\n  }\n}"
+      RoleArn:
+        Fn::GetAtt:
+        - StepFunctionsServiceRole
+        - Arn
+    Type: AWS::StepFunctions::StateMachine
+  YouGifStepInvokerFunction:
+    Properties:
+      CodeUri: s3://kwluo-sam/a504ee9b83620ef1718e83f4034485ac
+      Environment:
+        Variables:
+          STEPFUNCTION_ARN:
+            Ref: YouGifStepFunctionStateMachine
+      Events:
+        OnYougifCommand:
+          Properties:
+            Method: get
+            Path: /dackbot/yougif
+          Type: Api
+      Handler: index.handler
+      MemorySize: 128
+      Policies:
+      - Statement:
+        - Action:
+          - states:StartExecution
+          Effect: Allow
+          Resource:
+            Ref: YouGifStepFunctionStateMachine
+        Version: '2012-10-17'
+    Type: AWS::Serverless::Function
+Transform: AWS::Serverless-2016-10-31

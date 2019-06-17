@@ -8,7 +8,7 @@
             "address": "localhost",
             "port": 5858,
             // From the sam init example, it would be "${workspaceRoot}/hello_world"
-            "localRoot": "${workspaceRoot}/lambda/yougif",
+            "localRoot": "${workspaceRoot}/lambda/yougifStepInvoker",
             "remoteRoot": "/var/task",
             "protocol": "inspector",
             "stopOnEntry": false

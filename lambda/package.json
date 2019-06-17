@@ -1,0 +1,13 @@
+{
+  "name": "lambda",
+  "version": "1.0.0",
+  "description": "This is a sample template for lambda - Below is a brief explanation of what we have generated for you:",
+  "main": "index.js",
+  "scripts": {
+    "build": "sam build -u --parameter-overrides 'ParameterKey=DackbotWebhookId,ParameterValue=${env:DACKBOT_WEBHOOK_ID} ParameterKey=DackbotWebhookToken,ParameterValue=${env:DACKBOT_WEBHOOK_TOKEN} ParameterKey=GfycatClientId,ParameterValue=${env:GFYCAT_CLIENT_ID} ParameterKey=GfycatClientSecret,ParameterValue=${env:GFYCAT_CLIENT_SECRET}'",
+    "package": "sam package --s3-bucket kwluo-sam --output-template-file packaged.yaml",
+    "deploy": "sam deploy --template-file packaged.yaml --stack-name dackbot-yougif-command --capabilities CAPABILITY_IAM --region us-west-2 --parameter-overrides DackbotWebhookId=${env:DACKBOT_WEBHOOK_ID} DackbotWebhookToken=${env:DACKBOT_WEBHOOK_TOKEN} GfycatClientId=${env:GFYCAT_CLIENT_ID} GfycatClientSecret=${env:GFYCAT_CLIENT_SECRET}"
+  },
+  "author": "",
+  "license": "ISC"
+}

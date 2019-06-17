@@ -2,35 +2,183 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
   Commands for the DackBOT
+
+Parameters:
+  DackbotWebhookId:
+    Type: String
+    Default: 'putyourshere'
+    Description: Webhook id for sending messages to discord
   
+  DackbotWebhookToken:
+    Type: String
+    Default: 'putyourshere'
+    Description: Webhook token for sending messages to discord
+
+  GfycatClientId:
+    Type: String
+    Default: 'putyourshere'
+    Description: Gfycat API client id
+
+  GfycatClientSecret:
+    Type: String
+    Default: 'putyourshere'
+    Description: Gfycat API secret
+  
+######   ##        #######  ########     ###    ##        ######  
+##    ##  ##       ##     ## ##     ##   ## ##   ##       ##    ## 
+##        ##       ##     ## ##     ##  ##   ##  ##       ##       
+##   #### ##       ##     ## ########  ##     ## ##        ######  
+##    ##  ##       ##     ## ##     ## ######### ##             ## 
+##    ##  ##       ##     ## ##     ## ##     ## ##       ##    ## 
+ ######   ########  #######  ########  ##     ## ########  ###### 
+
 Globals:
   Function:
+    Runtime: nodejs8.10
     Timeout: 60
+    Environment:
+        Variables:
+          DACKBOT_WEBHOOK_ID: !Ref DackbotWebhookId
+          DACKBOT_WEBHOOK_TOKEN: !Ref DackbotWebhookToken
+          GFYCAT_CLIENT_ID: !Ref GfycatClientId
+          GFYCAT_CLIENT_SECRET: !Ref GfycatClientSecret
+
+##          ###    ##     ## ########  ########     ###    
+##         ## ##   ###   ### ##     ## ##     ##   ## ##   
+##        ##   ##  #### #### ##     ## ##     ##  ##   ##  
+##       ##     ## ## ### ## ########  ##     ## ##     ## 
+##       ######### ##     ## ##     ## ##     ## ######### 
+##       ##     ## ##     ## ##     ## ##     ## ##     ## 
+######## ##     ## ##     ## ########  ########  ##     ##
 
 Resources:
-  YouGifCommandFunction:
+  YouGifStepInvokerFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: yougif/
+      CodeUri: yougifStepInvoker/
       Handler: index.handler
-      Runtime: nodejs8.10
-      MemorySize: 2048
-      Layers:
-        - arn:aws:lambda:us-west-2:523775743690:layer:ffmpeg:9
+      MemorySize: 128
       Environment:
         Variables:
-          DACKBOT_WEBHOOK_ID: '123'
-          DACKBOT_WEBHOOK_TOKEN: '123'
-          GFYCAT_CLIENT_ID: '123'
-          GFYCAT_CLIENT_SECRET: '123'
+          STEPFUNCTION_ARN: !Ref YouGifStepFunctionStateMachine
       Events:
-        OnMessage:
+        OnYougifCommand:
           Type: Api
           Properties:
-            Path: /dackbot/yougif
-            Method: post
+            Path: '/dackbot/yougif'
+            Method: get
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - "states:StartExecution"
+              Resource: !Ref YouGifStepFunctionStateMachine
+
+  YouGifConverterFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: yougifConverter/
+      Handler: index.handler
+      MemorySize: 2048
+      Layers:
+        - arn:aws:lambda:us-west-2:523775743690:layer:ffmpeg-native:1
+
+  GfycatPollerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: gfycatPoller/
+      Handler: index.handler
+      MemorySize: 256
+
+ ######  ######## ######## ########     ######## ##     ## ##    ##  ######  ######## ####  #######  ##    ## 
+##    ##    ##    ##       ##     ##    ##       ##     ## ###   ## ##    ##    ##     ##  ##     ## ###   ## 
+##          ##    ##       ##     ##    ##       ##     ## ####  ## ##          ##     ##  ##     ## ####  ## 
+ ######     ##    ######   ########     ######   ##     ## ## ## ## ##          ##     ##  ##     ## ## ## ## 
+      ##    ##    ##       ##           ##       ##     ## ##  #### ##          ##     ##  ##     ## ##  #### 
+##    ##    ##    ##       ##           ##       ##     ## ##   ### ##    ##    ##     ##  ##     ## ##   ### 
+ ######     ##    ######## ##           ##        #######  ##    ##  ######     ##    ####  #######  ##    ##  
+
+  YouGifStepFunctionStateMachine:
+    Type: "AWS::StepFunctions::StateMachine"
+    Properties:
+      RoleArn: !GetAtt StepFunctionsServiceRole.Arn
+      DefinitionString: !Sub |-
+        {
+          "Comment": "Converts a youtube video into a gif and uploads to gfycat.",
+          "StartAt": "YouGif Converter",
+          "States": {
+            "YouGif Converter": {
+              "Comment": "Downloads a youtube video and converts it to a gfycat",
+              "Type": "Task",
+              "Resource": "${YouGifConverterFunction.Arn}",
+              "ResultPath": "$.gfydata",
+              "Next": "Gfycat Poller"
+            },
+            "Gfycat Poller": {
+              "Comment": "Polls gfycat to check status of encoder.",
+              "Type": "Task",
+              "Resource": "${GfycatPollerFunction.Arn}",
+              "End": true,
+              "Retry": [
+                {
+                  "ErrorEquals": [ "States.TaskFailed" ],
+                  "IntervalSeconds": 10,
+                  "MaxAttempts": 5
+                }
+              ]
+            }
+          }
+        }
+
+
+####    ###    ##     ## 
+ ##    ## ##   ###   ### 
+ ##   ##   ##  #### #### 
+ ##  ##     ## ## ### ## 
+ ##  ######### ##     ## 
+ ##  ##     ## ##     ## 
+#### ##     ## ##     ## 
+
+  StepFunctionsServiceRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      Path: !Join ["", ["/", !Ref "AWS::StackName", "/"]]
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/AWSStepFunctionsFullAccess"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Sid: "AllowStepFunctionsServiceToAssumeRole"
+            Effect: "Allow"
+            Action: 
+              - "sts:AssumeRole"
+            Principal:
+              Service:
+                - !Sub "states.${AWS::Region}.amazonaws.com"
+      Policies:
+        - PolicyName: "CallLambdaFunctions"
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "lambda:InvokeFunction"
+                Resource: 
+                  - !Sub ${YouGifConverterFunction.Arn}
+                  - !Sub ${GfycatPollerFunction.Arn}
 
 Outputs:
-  DackbotApi:
-    Description: "API Gateway endpoint URL for Prod stage for Dackbot functions"
-    Value: !Sub "https://${DackbotApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/dackbot/"
+  YougifStepFunctionStateMachineArn:
+    Description: "Step Function State Machine ARN"
+    Value: !Ref YouGifStepFunctionStateMachine
+
+  YouGifConverterFunctionArn:
+    Description: "YouGif Converter Function ARN"
+    Value: !GetAtt YouGifConverterFunction.Arn
+
+  GfycatPollerFunctionArrn:
+    Description: "Gfycat Poller Function ARN"
+    Value: !GetAtt GfycatPollerFunction.Arn
+  
