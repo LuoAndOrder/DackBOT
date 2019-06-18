@@ -1,0 +1,3 @@
+sam build -u --parameter-overrides 'ParameterKey=DackbotWebhookId,ParameterValue=$DACKBOT_WEBHOOK_ID ParameterKey=DackbotWebhookToken,ParameterValue=$DACKBOT_WEBHOOK_TOKEN ParameterKey=GfycatClientId,ParameterValue=$GFYCAT_CLIENT_ID ParameterKey=GfycatClientSecret,ParameterValue=$GFYCAT_CLIENT_SECRET'
+sam package --s3-bucket kwluo-sam --output-template-file packaged.yaml
+sam deploy --template-file packaged.yaml --stack-name dackbot-yougif-command --capabilities CAPABILITY_IAM --region us-west-2 --parameter-overrides DackbotWebhookId=$DACKBOT_WEBHOOK_ID DackbotWebhookToken=$DACKBOT_WEBHOOK_TOKEN GfycatClientId=$GFYCAT_CLIENT_ID GfycatClientSecret=$GFYCAT_CLIENT_SECRET

@@ -43,10 +43,11 @@ async function pollGfycat(gfyname) {
 }
 
 exports.handler = async (event, context) => {
-  let body = JSON.parse(event.body);
-  if (!body.gfyname) {
-    throw Error("Bad input: " + event.body);
+  let input = JSON.parse(event.body);
+  console.log(`Input Event: ${JSON.stringify(event)}`);
+  if (!input.gfyname) {
+    throw Error("Bad input: " + JSON.stringify(event));
   }
 
-  return await pollGfycat(body.gfyname);
+  return await pollGfycat(input.gfyname);
 };

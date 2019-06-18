@@ -53,7 +53,7 @@ Parameters:
 Resources:
   GfycatPollerFunction:
     Properties:
-      CodeUri: s3://kwluo-sam/9d692fd828c20fc6fe1d47dd94ec6d3b
+      CodeUri: s3://kwluo-sam/104981af1634c1a8e6deb1b0cdd5441e
       Handler: index.handler
       MemorySize: 256
     Type: AWS::Serverless::Function
@@ -91,7 +91,7 @@ Resources:
     Type: AWS::IAM::Role
   YouGifConverterFunction:
     Properties:
-      CodeUri: s3://kwluo-sam/f9b94992558fc73f61ea778723e74255
+      CodeUri: s3://kwluo-sam/f6cf09646617a7f5920254f01893bdd8
       Handler: index.handler
       Layers:
       - arn:aws:lambda:us-west-2:523775743690:layer:ffmpeg-native:1
@@ -108,9 +108,10 @@ Resources:
           ,\n      \"Next\": \"Gfycat Poller\"\n    },\n    \"Gfycat Poller\": {\n\
           \      \"Comment\": \"Polls gfycat to check status of encoder.\",\n    \
           \  \"Type\": \"Task\",\n      \"Resource\": \"${GfycatPollerFunction.Arn}\"\
-          ,\n      \"End\": true,\n      \"Retry\": [\n        {\n          \"ErrorEquals\"\
-          : [ \"States.TaskFailed\" ],\n          \"IntervalSeconds\": 10,\n     \
-          \     \"MaxAttempts\": 5\n        }\n      ]\n    }\n  }\n}"
+          ,\n      \"InputPath\": \"$.gfydata\",\n      \"End\": true,\n      \"Retry\"\
+          : [\n        {\n          \"ErrorEquals\": [ \"States.TaskFailed\" ],\n\
+          \          \"IntervalSeconds\": 10,\n          \"MaxAttempts\": 5,\n   \
+          \       \"BackoffRate\": 1.0\n        }\n      ]\n    }\n  }\n}"
       RoleArn:
         Fn::GetAtt:
         - StepFunctionsServiceRole
@@ -118,7 +119,7 @@ Resources:
     Type: AWS::StepFunctions::StateMachine
   YouGifStepInvokerFunction:
     Properties:
-      CodeUri: s3://kwluo-sam/a504ee9b83620ef1718e83f4034485ac
+      CodeUri: s3://kwluo-sam/858c433067923370b7656fc642b2132d
       Environment:
         Variables:
           STEPFUNCTION_ARN:
