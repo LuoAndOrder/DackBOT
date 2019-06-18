@@ -3,17 +3,18 @@
 const Discord = require('discord.js');
 const Registry = require('./registry');
 
-const tubeGif = require('./commands/tubeGif');
+const yougif = require('./commands/yougif');
 
 const client = new Discord.Client();
+
 
 let handleHello = (msg) => {
   msg.channel.send('Hello, world!');
 }
 
 Registry.registerExactCommand("!hello", handleHello);
-Registry.registerPrefixCommand('!tubegif', tubeGif);
-Registry.registerRegexCommand("youtube.com\\/watch\\?v=([a-zA-Z0-9_-]{11})", tubeGif);
+Registry.registerPrefixCommand('!yougif', yougif);
+Registry.registerRegexCommand("youtube.com\\/watch\\?v=([a-zA-Z0-9_-]{11})", yougif);
 
 client.on('message', msg => {
   let lowerMsg = msg.content.toLowerCase();
