@@ -30,12 +30,10 @@ async function getGfyname(title) {
 }
 
 async function uploadGfycat(fileUrl, gfyname) {
-  const headers = {Authorization: gfycat.token};
   await rp({
     uri: 'https://filedrop.gfycat.com',
       json: true,
       method: 'POST',
-      headers,
       formData: {
         key: gfyname,
         file: fs.createReadStream(fileUrl),
@@ -48,10 +46,8 @@ async function uploadGfycat(fileUrl, gfyname) {
 
 async function handleError(err) {
   await discordHook.send('Human, I failed: ' + err.message);
-  return({
-    'statusCode': 500,
-    'body': err.message
-  });
+  console.error(err.message);
+  throw err;
 }
 
 async function handleYouGifRequest(body) {
@@ -81,9 +77,6 @@ async function handleYouGifRequest(body) {
       .setFfmpegPath('/opt/bin/ffmpeg')
       .on('start', function() {
         console.log(`[ffmpeg] Start Processing: ${info.url}`);
-      })
-      .on('progress', (progress) => {
-        console.log(`[ffmpeg] ${JSON.stringify(progress)}`);
       })
       .on('error', function(err) {
         reject(err);

@@ -119,12 +119,14 @@ Resources:
               "Comment": "Polls gfycat to check status of encoder.",
               "Type": "Task",
               "Resource": "${GfycatPollerFunction.Arn}",
+              "InputPath": "$.gfydata",
               "End": true,
               "Retry": [
                 {
                   "ErrorEquals": [ "States.TaskFailed" ],
                   "IntervalSeconds": 10,
-                  "MaxAttempts": 5
+                  "MaxAttempts": 5,
+                  "BackoffRate": 1.0
                 }
               ]
             }

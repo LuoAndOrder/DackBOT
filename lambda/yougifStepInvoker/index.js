@@ -31,7 +31,7 @@ exports.handler = async (event, context) => {
 
   let sf = new AWS.StepFunctions();
   try {
-    await promisify(sf.startExecution.bind(sf))(params)
+    return await promisify(sf.startExecution.bind(sf))(params)
       .then(() => {
         return ({
           statusCode: 200,
