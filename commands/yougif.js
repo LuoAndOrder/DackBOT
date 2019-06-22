@@ -9,7 +9,7 @@ const yougif = async (msg) => {
   if (regex.test(msg.content)) {
     url = split[0];
     startTime = split.length > 1 ? split[1] : '00:00:00';
-    duration = split.lenght > 2 ? split[2] : '10';
+    duration = split.length > 2 ? split[2] : '10';
   } else {
     let base_url = 'https://www.youtube.com/watch?v=';
     url = base_url + split[1];
