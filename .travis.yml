@@ -1,0 +1,21 @@
+sudo: required
+language: bash
+env:
+  global:
+    - LIVE_SERVICE=dackbot-service
+    - LIVE_CLUSTER_NAME=dackbot-cluster
+    - LIVE_APP_NAME=dackbot
+    - AWS_URL=523775743690.dkr.ecr.us-west-2.amazonaws.com
+    - IMAGE_NAME=dackbot_dackbot
+
+services:
+  - docker
+
+before_install:
+  - chmod +x docker-deploy/docker_push.sh
+  - chmod +x docker-deploy/ecs.sh
+  - chmod +x docker-deploy/ecs_deploy.sh
+
+after_success:
+  - docker-deploy/docker_push.sh
+  - docker-deploy/ecs_deploy.sh
