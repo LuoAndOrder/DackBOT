@@ -1,15 +1,18 @@
 # Specify a base image
 FROM node:lts-alpine
 
+# Install some dependencies
+COPY ./package.json .
+RUN npm install
+
 # Copy local files
 COPY ./ ./
 
-# Install some dependencies
-RUN npm install
+ARG DACKBOT_BOT_TOKEN
+ENV DACKBOT_BOT_TOKEN $DACKBOT_BOT_TOKEN
 
-# Set up Environment variables
-ARG token
-ENV DACKBOT_BOT_TOKEN=$token
+ARG DACKBOT_OWNER_ID
+ENV DACKBOT_OWNER_ID $DACKBOT_OWNER_ID
 
 # Set the default command
 CMD ["npm", "start"]

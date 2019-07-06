@@ -1,6 +1,9 @@
-version: '3'
+version: '3.7'
 services:
   dackbot:
-    restart: always
-    build: .
-    env_file: .env
+    restart: unless-stopped
+    build:
+      context: .
+      args:
+        - DACKBOT_BOT_TOKEN=${DACKBOT_BOT_TOKEN}
+        - DACKBOT_OWNER_ID=${DACKBOT_OWNER_ID}
