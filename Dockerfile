@@ -8,6 +8,8 @@ RUN npm install
 # Copy local files
 COPY ./ ./
 
+COPY ./hotpatches/dispatcher.js ./node_modules/discord.js-commando/src/dispatcher.js
+
 ARG DACKBOT_BOT_TOKEN
 ENV DACKBOT_BOT_TOKEN $DACKBOT_BOT_TOKEN
 

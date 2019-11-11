@@ -54,6 +54,7 @@ module.exports = class YouGifCommand extends commando.Command {
 
   async run(msg, {videoId, startTime, duration}) {
     const channelId = msg.channel.id;
+    console.log("Bot detected yougif command from " + msg.author);
     return await yougif(videoId, startTime, duration, channelId);
   }
 }
