@@ -47,13 +47,20 @@ module.exports = class YouGifCommand extends commando.Command {
           prompt: 'What is the duration?',
           default: 10,
           type: 'integer'
+        },
+        {
+          key: 'channelId',
+          label: 'channel id',
+          prompt: 'What\'s the channel id?',
+          default: "",
+          type: 'string',
         }
       ]
     });
   }
 
-  async run(msg, {videoId, startTime, duration}) {
-    const channelId = msg.channel.id;
+  async run(msg, {videoId, startTime, duration, channelId}) {
+    if (chanelId === "") channelId = msg.channel.id;
     console.log("Bot detected yougif command from " + msg.author);
     return await yougif(videoId, startTime, duration, channelId);
   }
