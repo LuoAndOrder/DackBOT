@@ -52,7 +52,7 @@ module.exports = class YouGifCommand extends commando.Command {
           key: 'channelId',
           label: 'channel id',
           prompt: 'What\'s the channel id?',
-          default: "",
+          default: 'default',
           type: 'string',
         }
       ]
@@ -60,7 +60,9 @@ module.exports = class YouGifCommand extends commando.Command {
   }
 
   async run(msg, {videoId, startTime, duration, channelId}) {
-    if (chanelId === "") channelId = msg.channel.id;
+    if (channelId == "default") { 
+      channelId = msg.channel.id;
+    }
     console.log("Bot detected yougif command from " + msg.author);
     return await yougif(videoId, startTime, duration, channelId);
   }
