@@ -15,6 +15,15 @@ const getYoutubeVideoId = function(text) {
   return null;
 }
 
+const matchUrl = function(text) {
+  let urlRegex = /(?<url>(https?):\/\/[^\s$.?#].[^\s]*)/;
+  let urlMatch = text.match(urlRegex);
+  if (urlMatch && urlMatch.groups.url) {
+    return urlMatch.groups.url;
+  }
+  return null;
+}
+
 const client = new Commando.Client({
   owner: process.env.DACKBOT_OWNER_ID,
   commandPrefix: '-'
@@ -32,6 +41,15 @@ client.on('message', msg => {
   if (youtubeVideoId) {
     console.log('detected videoid: ' + youtubeVideoId);
     msg.react(msg.guild.emojis.get(GIF_EMOJI_ID));
+    return;
+  }
+
+  let url = matchUrl(msg.content);
+  if (url) {
+    console.log('detected url: ' + url);
+    console.log(msg.guild.emojis);
+    msg.react(msg.guild.emojis.find('name', 'tldr'));
+    return;
   }
 });
 
@@ -47,6 +65,15 @@ client.on('messageReactionAdd', (reaction, user) => {
         'startTime': '00:00:00',
         'duration': 15,
         'channelId': reaction.message.channel.id
+      });
+    }
+  } else if (reaction.emoji.name == 'tldr' && !user.bot && reaction.users.has(client.user.id)) {
+    console.log('TLDR Reaction: ' + reaction.message.content);
+    let url = matchUrl(reaction.message.content);
+    if (url) {
+      reaction.remove(client.user);
+      client.registry.commands.get('tldr').run(reaction.message, {
+        'url': url
       });
     }
   }
