@@ -13,7 +13,7 @@ const tldr = async (url, msg) => {
   }
 
   console.log(response);
-  let {sm_api_title, sm_api_content, sm_api_content_reduced} = JSON.parse(response);
+  let {sm_api_title, sm_api_content, sm_api_content_reduced, sm_api_limitation} = JSON.parse(response);
   let channel = msg.channel;
   let contentWithNewlines = sm_api_content.replace(/\[BREAK\]/g, '\n');
   let richEmbed = new discord.RichEmbed()
@@ -23,6 +23,7 @@ const tldr = async (url, msg) => {
     .setFooter(`Content reduced by ${sm_api_content_reduced}`)
     .setDescription(contentWithNewlines);
   channel.send(richEmbed);
+  console.log(sm_api_limitation);
 }
 
 module.exports = class YouGifCommand extends commando.Command {
