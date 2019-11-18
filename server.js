@@ -76,7 +76,7 @@ client.on('messageReactionAdd', (reaction, user) => {
         'url': url
       });
     }
-  } else if (reaction.emoji == '❌' && reaction.message.author.id == client.user.id) {
+  } else if (reaction.emoji == '❌' && reaction.message.author.id == client.user.id && user.id != client.user.id) {
     console.log("Deleting message..." + reaction.message.content);
     Promise.resolve(reaction.message.delete());
   }
