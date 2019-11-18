@@ -38,23 +38,23 @@ client.registry
 
 client.on('message', msg => {
   let youtubeVideoId = getYoutubeVideoId(msg.content);
+  let url = matchUrl(msg.content);
   if (youtubeVideoId) {
     console.log('detected videoid: ' + youtubeVideoId);
     msg.react(msg.guild.emojis.get(GIF_EMOJI_ID));
-    return;
+  } else if (url) {
+    console.log('detected url: ' + url);
+    msg.react(msg.guild.emojis.find('name', 'tldr'));
   }
 
-  let url = matchUrl(msg.content);
-  if (url) {
-    console.log('detected url: ' + url);
-    console.log(msg.guild.emojis);
-    msg.react(msg.guild.emojis.find('name', 'tldr'));
-    return;
+  if (msg.author.id === client.user.id) {
+    msg.react('❌');
   }
 });
 
 client.on('messageReactionAdd', (reaction, user) => {
-  console.log('Detected reaction');
+  console.log('Detected reaction ' + reaction.emoji);
+  
   if(reaction.emoji.id == GIF_EMOJI_ID && !user.bot && reaction.users.has(client.user.id)) {
     console.log('Time to gfy this message: ' + reaction.message.content);
     let videoId = getYoutubeVideoId(reaction.message.content);
@@ -76,6 +76,9 @@ client.on('messageReactionAdd', (reaction, user) => {
         'url': url
       });
     }
+  } else if (reaction.emoji == '❌' && reaction.message.author.id == client.user.id) {
+    console.log("Deleting message..." + reaction.message.content);
+    Promise.resolve(reaction.message.delete());
   }
 });
 
