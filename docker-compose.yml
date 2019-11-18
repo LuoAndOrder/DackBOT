@@ -7,3 +7,4 @@ services:
       args:
         - DACKBOT_BOT_TOKEN=${DACKBOT_BOT_TOKEN}
         - DACKBOT_OWNER_ID=${DACKBOT_OWNER_ID}
+        - SMMRY_API_KEY=${SMMRY_API_KEY}
