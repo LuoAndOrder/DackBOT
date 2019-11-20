@@ -3,8 +3,7 @@
 const Commando = require('discord.js-commando');
 const path = require('path');
 
-//const GIF_EMOJI_ID = '643557229894696994';
-const GIF_EMOJI_ID = '584072611382689801'; //pika
+const GIF_EMOJI_ID = '643557229894696994';
 
 const getYoutubeVideoId = function(text) {
   let youtubeRegex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)(?<videoid>[\w\-]+)(\S+)?$/;
