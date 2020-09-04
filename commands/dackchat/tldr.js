@@ -26,7 +26,7 @@ const tldr = async (url, msg) => {
   console.log(sm_api_limitation);
 }
 
-module.exports = class YouGifCommand extends commando.Command {
+module.exports = class TldrCommand extends commando.Command {
   constructor(client) {
     console.log("Registering TLDR command...");
     super(client, {
