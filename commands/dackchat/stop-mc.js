@@ -22,7 +22,7 @@ const stopmc = async (msg, fleetid) => {
       channel.send('ERROR: ' + err);
   }
 
-  // Send ack to channel that it is starting
+  // Send ack to channel that it is stopping
   let channel = msg.channel;
   channel.send('ACK, stopping server.');
 
