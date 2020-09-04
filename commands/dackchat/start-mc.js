@@ -191,10 +191,10 @@ const startmc = async (msg) => {
         
         try {
             let data = await ec2.describeInstances(describeInstanceParams).promise();
-            if (data.Reservations[0] && data.reservations[0].Instances[0]) {
-            instanceIp = data.Reservations[0].Instances[0].PublicIpAddress;
-            console.log("Found instance ip: " + instanceIp);
-            break;
+            if (data.Reservations && data.Reservations[0] && data.Reservations[0].Instances) {
+                instanceIp = data.Reservations[0].Instances[0].PublicIpAddress;
+                console.log("Found instance ip: " + instanceIp);
+                break;
             }
         } catch (err) {
             console.log(err, err.stack);

@@ -1,4 +1,6 @@
 const AWS = require('aws-sdk');
+const {promisify} = require('util');
+const sleep = promisify(setTimeout);
 
 AWS.config.update({region: 'us-west-2'});
 
@@ -148,42 +150,42 @@ var params = {
 //     else console.log(data);
 // });
 
-var describeParams = {
-    SpotFleetRequestId: "sfr-3b23da5a-4a44-432d-ba6c-eb674e391ea5"
-};
-// ec2.describeSpotFleetInstances(describeParams, function(err, data) {
-//     if (err) console.log(err, err.stack);
-//     else console.log(data);
-//     /*
-//    data = {
-//     ActiveInstances: [
-//        {
-//       InstanceId: "i-1234567890abcdef0", 
-//       InstanceType: "m3.medium", 
-//       SpotInstanceRequestId: "sir-08b93456"
-//      }
-//     ], 
-//     SpotFleetRequestId: "sfr-73fbd2ce-aa30-494c-8788-1cee4EXAMPLE"
-//    }
-//    */
-// })
-
 const describeInstance = async () => {
-var describeInstanceParams = {
-    Filters: [
-        {
-            Name: "tag:aws:ec2spot:fleet-request-id",
-            Values: [
-                "sfr-3b23da5a-4a44-432d-ba6c-eb674e391ea5"
-            ]
+    var describeInstanceParams = {
+        Filters: [
+            {
+                Name: "tag:aws:ec2spot:fleet-request-id",
+                Values: [
+                    "sfr-3b23da5a-4a44-432d-ba6c-eb674e391ea5"
+                ]
+            }
+        ]
+      };
+
+        var maxRetryCount = 5;
+        var retry = 0;
+        var instanceIp;
+        var retryDelayInSeconds = 1;
+        while (retry < maxRetryCount) {
+            console.log("Polling for ip address. Attempt #" + retry);
+            await sleep(retryDelayInSeconds * 1000);
+            retry++;
+            retryDelayInSeconds += 10;
+            
+            try {
+                let data = await ec2.describeInstances(describeInstanceParams).promise();
+                console.log(data);
+                if (data.Reservations && data.Reservations[0] && data.Reservations[0].Instances) {
+                    instanceIp = data.Reservations[0].Instances[0].PublicIpAddress;
+                    console.log("Found instance ip: " + instanceIp);
+                    break;
+                }
+            } catch (err) {
+                console.log(err, err.stack);
+                //channel.send('ERROR: ' + err);
+                return;
+            }
         }
-    ]
-    // InstanceIds: [
-    //     "i-072dd102c9e082691"
-    // ]
-};
-let data = await ec2.describeInstances(describeInstanceParams).promise();
-return data.Reservations[0].Instances[0].PublicIpAddress;
 }
 
 var stopParams = {
