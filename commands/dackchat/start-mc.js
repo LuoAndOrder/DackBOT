@@ -7,6 +7,7 @@ AWS.config.update({region: 'us-west-2'});
 var ec2 = new AWS.EC2({apiVersion: '2016-11-15'});
 
 const startmc = async (msg) => {
+    let channel = msg.channel;
 
     var params = {
         InstanceCount: 1,
@@ -141,14 +142,20 @@ const startmc = async (msg) => {
             }
         ]
     };
-  
-    var spotFleetRequestId;
-    let data = await ec2.requestSpotFleet(params).promise();
-    console.log(data);
-    spotFleetRequestId = data.SpotFleetRequestId;
+    
+    try {
+        var spotFleetRequestId;
+        let data = await ec2.requestSpotFleet(params).promise();
+        console.log(data);
+        spotFleetRequestId = data.SpotFleetRequestId;
+    } catch (err) {
+        console.log(err, err.stack);
+        channel.send('ERROR: ' + err);
+        return;
+    }
   
     // Send ack to channel that it is starting
-    let channel = msg.channel;
+    
     channel.send('ACK, startng server. The fleet request id is: ' + spotFleetRequestId);
     
     // Wait until instance ip is available
@@ -168,12 +175,18 @@ const startmc = async (msg) => {
     var instanceIp;
     while (retry < maxRetryCount) {
         retry++;
-  
-        let data = await ec2.describeInstances(describeInstanceParams).promise();
-        if (data.Reservations[0] && data.reservations[0].Instances[0]) {
-          instanceIp = data.Reservations[0].Instances[0].PublicIpAddress;
-          console.log("Found instance ip: " + instanceIp);
-          break;
+        
+        try {
+            let data = await ec2.describeInstances(describeInstanceParams).promise();
+            if (data.Reservations[0] && data.reservations[0].Instances[0]) {
+            instanceIp = data.Reservations[0].Instances[0].PublicIpAddress;
+            console.log("Found instance ip: " + instanceIp);
+            break;
+            }
+        } catch (err) {
+            console.log(err, err.stack);
+            channel.send('ERROR: ' + err);
+            return;
         }
     }
   
