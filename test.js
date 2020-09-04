@@ -168,6 +168,7 @@ var describeParams = {
 //    */
 // })
 
+const describeInstance = async () => {
 var describeInstanceParams = {
     Filters: [
         {
@@ -181,10 +182,9 @@ var describeInstanceParams = {
     //     "i-072dd102c9e082691"
     // ]
 };
-ec2.describeInstances(describeInstanceParams, function(err, data) {
-    if (err) console.log(err, err.stack);
-    else console.log(data.Reservations[0].Instances[0].PublicIpAddress);
-});
+let data = await ec2.describeInstances(describeInstanceParams).promise();
+return data.Reservations[0].Instances[0].PublicIpAddress;
+}
 
 var stopParams = {
     SpotFleetRequestIds: [
@@ -197,3 +197,4 @@ var stopParams = {
 //     if (err) console.log(err, err.stack);
 //     else console.log(data);
 // })
+describeInstance().then(result => console.log(result));
