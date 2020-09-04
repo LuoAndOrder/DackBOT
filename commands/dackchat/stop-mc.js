@@ -10,7 +10,7 @@ const stopmc = async (msg, fleetid, verifystop) => {
   let channel = msg.channel;
 
   if (verifystop.toLowerCase() != "yes") {
-      channel.send("HOLUP: Make sure you type /save-all and /stop in the minecraft server before running this command. If you have done so, retype this command but add a 'yes' as the last argument.");
+      channel.send("HOLUP: Make sure you type /save-all and /stop in the minecraft server first, then wait 1-2 minutes before running this command. If you have done so, retype this command but add a 'yes' as the last argument.");
       return;
   }
 
