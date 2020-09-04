@@ -6,7 +6,7 @@ AWS.config.update({region: 'us-west-2'});
 
 var ec2 = new AWS.EC2({apiVersion: '2016-11-15'});
 
-const startmc = async (url, msg) => {
+const startmc = async (msg) => {
 
   var params = {
       InstanceCount: 1,
@@ -205,6 +205,6 @@ module.exports = class StartMcCommand extends commando.Command {
 
   async run(msg, {url}) {
     console.log("Bot detected startmc command from " + msg.author);
-    return await startmc();
+    return await startmc(msg);
   }
 }
