@@ -15,9 +15,10 @@ const stopmc = async (msg, fleetid, verifystop) => {
   }
 
   var params = {
-      SplotFleetRequestIds: [
+      SpotFleetRequestIds: [
         fleetid
-      ]
+      ],
+      TerminateInstances: true
   };
 
   try{

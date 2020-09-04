@@ -1,10 +1,14 @@
 const AWS = require('aws-sdk');
 const commando = require('discord.js-commando');
 const discord = require('discord.js');
+const { promisify } = require('util');
+const sleep = promisify(setTimeout);
 
 AWS.config.update({region: 'us-west-2'});
 
 var ec2 = new AWS.EC2({apiVersion: '2016-11-15'});
+
+
 
 const startmc = async (msg) => {
     let channel = msg.channel;
@@ -178,8 +182,12 @@ const startmc = async (msg) => {
     var maxRetryCount = 5;
     var retry = 0;
     var instanceIp;
+    var retryDelayInSeconds = 10;
     while (retry < maxRetryCount) {
+        console.log("Polling for ip address. Attempt #" + retry);
+        await sleep(sleepDelayInSeconds * 1000);
         retry++;
+        retryDelayInSeconds += 10;
         
         try {
             let data = await ec2.describeInstances(describeInstanceParams).promise();
