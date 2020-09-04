@@ -10,9 +10,11 @@ const stopmc = async (msg, fleetid, verifystop) => {
   let channel = msg.channel;
 
   if (verifystop.toLowerCase() != "yes") {
-      channel.send("HOLUP: Make sure you type /save-all and /stop in the minecraft server before running this command. If you have done so, retyp this command but add a 'yes' as the last argument.");
+      channel.send("HOLUP: Make sure you type /save-all and /stop in the minecraft server before running this command. If you have done so, retype this command but add a 'yes' as the last argument.");
       return;
   }
+
+  console.log("Cancelling fleet request: " + fleetid);
 
   var params = {
       SpotFleetRequestIds: [
@@ -27,6 +29,7 @@ const stopmc = async (msg, fleetid, verifystop) => {
   } catch (err) {
       console.log(err, err.stack);
       channel.send('ERROR: ' + err);
+      return;
   }
 
   // Send ack to channel that it is stopping
@@ -47,8 +50,8 @@ module.exports = class StopMcCommand extends commando.Command {
       examples: ['stopmc [spot_fleet_request_id] [yes if run /stop before this command]'],
       args: [
           {
-              key: 'fleetId',
-              label: 'fleetId',
+              key: 'fleetid',
+              label: 'fleetid',
               prompt: 'What\s the spot fleet request id?',
               type: 'string'
           },

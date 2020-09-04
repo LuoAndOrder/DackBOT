@@ -165,7 +165,7 @@ const startmc = async (msg) => {
   
     // Send ack to channel that it is starting
     
-    channel.send('ACK, startng server. The fleet request id is: ' + spotFleetRequestId);
+    channel.send('ACK, startng server. SAVE THIS MESSAGE! The fleet request id is: ' + spotFleetRequestId);
     
     // Wait until instance ip is available
     var describeInstanceParams = {
@@ -185,7 +185,7 @@ const startmc = async (msg) => {
     var retryDelayInSeconds = 10;
     while (retry < maxRetryCount) {
         console.log("Polling for ip address. Attempt #" + retry);
-        await sleep(sleepDelayInSeconds * 1000);
+        await sleep(retryDelayInSeconds * 1000);
         retry++;
         retryDelayInSeconds += 10;
         
