@@ -23,126 +23,26 @@ const startmc = async (msg) => {
                 {
                     LaunchTemplateSpecification: {
                         LaunchTemplateId: "lt-0598a4ccd43dbadf1",
-                        Version: "3"
+                        Version: "4"
                     },
                     Overrides: [
                     {
-                        InstanceType: "m5d.large",
+                        InstanceType: "r5.large",
                         WeightedCapacity: 1,
                         SubnetId: "subnet-34ec5a7d"
                     },
                     {
-                        InstanceType: "m5d.large",
+                        InstanceType: "r5.large",
                         WeightedCapacity: 1,
                         SubnetId: "subnet-97c35ff0"
                     },
                     {
-                        InstanceType: "m5d.large",
+                        InstanceType: "r5.large",
                         WeightedCapacity: 1,
                         SubnetId: "subnet-28a5ae70"
                     },
                     {
-                        InstanceType: "m5d.large",
-                        WeightedCapacity: 1,
-                        SubnetId: "subnet-2bb24900"
-                    },
-                    {
-                        InstanceType: "m5dn.large",
-                        WeightedCapacity: 1,
-                        SubnetId: "subnet-34ec5a7d"
-                    },
-                    {
-                        InstanceType: "m5dn.large",
-                        WeightedCapacity: 1,
-                        SubnetId: "subnet-97c35ff0"
-                    },
-                    {
-                        InstanceType: "m5dn.large",
-                        WeightedCapacity: 1,
-                        SubnetId: "subnet-28a5ae70"
-                    },
-                    {
-                        InstanceType: "m5dn.large",
-                        WeightedCapacity: 1,
-                        SubnetId: "subnet-2bb24900"
-                    },
-                    {
-                        InstanceType: "m5ad.large",
-                        WeightedCapacity: 1,
-                        SubnetId: "subnet-34ec5a7d"
-                    },
-                    {
-                        InstanceType: "m5ad.large",
-                        WeightedCapacity: 1,
-                        SubnetId: "subnet-97c35ff0"
-                    },
-                    {
-                        InstanceType: "m5ad.large",
-                        WeightedCapacity: 1,
-                        SubnetId: "subnet-28a5ae70"
-                    },
-                    {
-                        InstanceType: "m5ad.large",
-                        WeightedCapacity: 1,
-                        SubnetId: "subnet-2bb24900"
-                    },
-                    {
-                        InstanceType: "r4.large",
-                        WeightedCapacity: 1,
-                        SubnetId: "subnet-34ec5a7d"
-                    },
-                    {
-                        InstanceType: "r4.large",
-                        WeightedCapacity: 1,
-                        SubnetId: "subnet-97c35ff0"
-                    },
-                    {
-                        InstanceType: "r4.large",
-                        WeightedCapacity: 1,
-                        SubnetId: "subnet-28a5ae70"
-                    },
-                    {
-                        InstanceType: "r4.large",
-                        WeightedCapacity: 1,
-                        SubnetId: "subnet-2bb24900"
-                    },
-                    {
-                        InstanceType: "m5n.large",
-                        WeightedCapacity: 1,
-                        SubnetId: "subnet-34ec5a7d"
-                    },
-                    {
-                        InstanceType: "m5n.large",
-                        WeightedCapacity: 1,
-                        SubnetId: "subnet-97c35ff0"
-                    },
-                    {
-                        InstanceType: "m5n.large",
-                        WeightedCapacity: 1,
-                        SubnetId: "subnet-28a5ae70"
-                    },
-                    {
-                        InstanceType: "m5n.large",
-                        WeightedCapacity: 1,
-                        SubnetId: "subnet-2bb24900"
-                    },
-                    {
-                        InstanceType: "c5a.large",
-                        WeightedCapacity: 1,
-                        SubnetId: "subnet-34ec5a7d"
-                    },
-                    {
-                        InstanceType: "c5a.large",
-                        WeightedCapacity: 1,
-                        SubnetId: "subnet-97c35ff0"
-                    },
-                    {
-                        InstanceType: "c5a.large",
-                        WeightedCapacity: 1,
-                        SubnetId: "subnet-28a5ae70"
-                    },
-                    {
-                        InstanceType: "c5a.large",
+                        InstanceType: "r5.large",
                         WeightedCapacity: 1,
                         SubnetId: "subnet-2bb24900"
                     }
