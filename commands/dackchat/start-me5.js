@@ -21,7 +21,7 @@ const startme5 = async (msg) => {
                 {
                     LaunchTemplateSpecification: {
                         LaunchTemplateId: "lt-0aed89efdd765cc87",
-                        Version: "4"
+                        Version: "1"
                     },
                     Overrides: [
                     {
