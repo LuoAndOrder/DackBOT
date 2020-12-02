@@ -22,7 +22,7 @@ const startmc = async (msg) => {
             LaunchTemplateConfigs: [
                 {
                     LaunchTemplateSpecification: {
-                        LaunchTemplateId: "lt-0598a4ccd43dbadf1",
+                        LaunchTemplateId: "lt-0486d51cb54f8c675",
                         Version: "4"
                     },
                     Overrides: [
