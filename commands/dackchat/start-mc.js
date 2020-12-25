@@ -8,10 +8,15 @@ AWS.config.update({region: 'us-west-2'});
 
 var ec2 = new AWS.EC2({apiVersion: '2016-11-15'});
 
+const serverTypeToLaunchTemplateId = {
+    'primordial': 'lt-0486d51cb54f8c675',
+    'sevtech': 'lt-068d2b31710c57641',
+    'me5': 'lt-0aed89efdd765cc87'
+}
 
-
-const startmc = async (msg) => {
+const startmc = async (msg, serverMap) => {
     let channel = msg.channel;
+    let lt = serverTypeToLaunchTemplateId[serverMap];
 
     var params = {
         SpotFleetRequestConfig: {
@@ -22,7 +27,7 @@ const startmc = async (msg) => {
             LaunchTemplateConfigs: [
                 {
                     LaunchTemplateSpecification: {
-                        LaunchTemplateId: "lt-0486d51cb54f8c675",
+                        LaunchTemplateId: lt,
                         Version: "4"
                     },
                     Overrides: [
@@ -65,7 +70,7 @@ const startmc = async (msg) => {
   
     // Send ack to channel that it is starting
     
-    channel.send('ACK, startng server. SAVE THIS MESSAGE! The fleet request id is: ' + spotFleetRequestId);
+    channel.send(`ACK, starting ${serverMap} server. SAVE THIS MESSAGE! The fleet request id is: ${spotFleetRequestId}`);
     
     // Wait until instance ip is available
     var describeInstanceParams = {
@@ -116,12 +121,21 @@ module.exports = class StartMcCommand extends commando.Command {
       group: 'dackchat',
       memberName: 'startmc',
       description: 'Starts the DACK minecraft server',
-      examples: ['startmc']
+      examples: ['startmc sevtech'],
+      args: [
+          {
+              key: 'serverMap',
+              label: 'server map',
+              prompt: 'Which map do you want to start?',
+              type: 'string',
+              default: 'sevtech'
+          }
+      ]
     });
   }
 
-  async run(msg, {url}) {
+  async run(msg, {serverMap}) {
     console.log("Bot detected startmc command from " + msg.author);
-    return await startmc(msg);
+    return await startmc(msg, serverMap);
   }
 }
