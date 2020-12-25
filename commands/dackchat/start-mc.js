@@ -14,9 +14,16 @@ const serverTypeToLaunchTemplateId = {
     'me5': 'lt-0aed89efdd765cc87'
 }
 
+const serverTypeToLaunchTemplateVersion = {
+    'primordial': '4',
+    'sevtech': '4',
+    'me5': '1'
+}
+
 const startmc = async (msg, serverMap) => {
     let channel = msg.channel;
     let lt = serverTypeToLaunchTemplateId[serverMap];
+    let ltversion = serverTypeToLaunchTemplateVersion[serverMap];
 
     var params = {
         SpotFleetRequestConfig: {
@@ -28,7 +35,7 @@ const startmc = async (msg, serverMap) => {
                 {
                     LaunchTemplateSpecification: {
                         LaunchTemplateId: lt,
-                        Version: "4"
+                        Version: ltversion
                     },
                     Overrides: [
                     {
