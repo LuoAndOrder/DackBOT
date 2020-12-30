@@ -128,7 +128,7 @@ module.exports = class StartMcCommand extends commando.Command {
       group: 'dackchat',
       memberName: 'startmc',
       description: 'Starts the DACK minecraft server',
-      examples: ['startmc sevtech'],
+      examples: ['startmc [sevtech|primordial|me5]'],
       args: [
           {
               key: 'serverMap',
