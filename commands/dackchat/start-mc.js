@@ -16,7 +16,7 @@ const serverTypeToLaunchTemplateId = {
 
 const serverTypeToLaunchTemplateVersion = {
     'primordial': '4',
-    'sevtech': '4',
+    'sevtech': '5',
     'me5': '1'
 }
 
@@ -41,22 +41,7 @@ const startmc = async (msg, serverMap) => {
                     {
                         InstanceType: "r5.large",
                         WeightedCapacity: 1,
-                        SubnetId: "subnet-34ec5a7d"
-                    },
-                    {
-                        InstanceType: "r5.large",
-                        WeightedCapacity: 1,
-                        SubnetId: "subnet-97c35ff0"
-                    },
-                    {
-                        InstanceType: "r5.large",
-                        WeightedCapacity: 1,
-                        SubnetId: "subnet-28a5ae70"
-                    },
-                    {
-                        InstanceType: "r5.large",
-                        WeightedCapacity: 1,
-                        SubnetId: "subnet-2bb24900"
+                        SubnetId: "subnet-97c35ff0" // us-west-2b
                     }
                 ]
                 }
